@@ -290,7 +290,11 @@ class SMTP
             return;
         }
         //Is this a PSR-3 logger?
-        if ($this->Debugoutput instanceof \Psr\Log\LoggerInterface) {
+        // PSR-3 is an optional dependency; avoid referencing the interface
+        // directly when it is not installed.
+        if (interface_exists('Psr\\Log\\LoggerInterface')
+            && $this->Debugoutput instanceof \Psr\Log\LoggerInterface
+        ) {
             //Remove trailing line breaks potentially added by calls to SMTP::client_send()
             $this->Debugoutput->debug(rtrim($str, "\r\n"));
 

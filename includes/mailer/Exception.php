@@ -30,7 +30,7 @@ class Exception extends \Exception
 {
     /**
      * Prettify error message output.
-     *
+     * 
      * @return string
      */
     public function errorMessage()

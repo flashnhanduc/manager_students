@@ -66,7 +66,7 @@ require_once './includes/function.php';
 // $rel = getSessionFlash('nhanduc123');
 
 // var_dump ($rel); 
-
+// sendMail('lynhanduc0406@gmail.com','đnagư nhan','không có gì');
 $module = _MODULES;
 $action = _ACTION; 
 

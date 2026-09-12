@@ -1,67 +1,70 @@
 <?php
-if(!defined( '_NhanDuc')){
-    die ('Truy cap kh hop le');
+if (!defined('_NhanDuc')) {
+    die('Truy cap kh hop le');
 }
-function layout ($layout){
-    if(file_exists(_PATH_URL_TEMPALTES.'/assets/layouts/'.$layout.'.php')){
-        require_once _PATH_URL_TEMPALTES.'/assets/layouts/'.$layout.'.php';
+function layout($layout)
+{
+    if (file_exists(_PATH_URL_TEMPALTES . '/assets/layouts/' . $layout . '.php')) {
+        require_once _PATH_URL_TEMPALTES . '/assets/layouts/' . $layout . '.php';
     }
 }
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-function sendMail($to, $subject, $content) {
+function sendMail($to, $subject, $content)
+{
     $mail = new PHPMailer(true);
-
     try {
-        // Cấu hình Server
-        $mail->SMTPDebug = 0; // Chỉnh lên 2 nếu muốn xem log lỗi chi tiết
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com'; // Bạn dùng Gmail để gửi
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'lynhanduc123@gmail.com'; // Email dùng để gửi
-        $mail->Password   = 'iexpkgoghodwrxqg'; // Mật khẩu ứng dụng (không phải pass đăng nhập)
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
-        $mail->CharSet    = 'UTF-8';
+        //Server settings
+        $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = 'lynhanduc123@gmail.com';                     //SMTP username
+        $mail->Password   = 'yvjhqqlnocbjxofv';                               //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+        $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
-        // Người gửi & Người nhận
         $mail->setFrom('lynhanduc0406@gmail.com', 'manager_students');
         $mail->addAddress($to);
 
         // Nội dung Email
+        $mail -> CharSet = "UTF-8";
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body    = $content;
 
-        return $mail->send(); 
+        $mail->send();
+    echo 'Message has been sent';
     } catch (Exception $e) {
-        return false;
+       echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
     }
 }
-function isPost (){
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
+
+function isPost()
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 }
-function isGET (){
-    if($_SERVER['REQUEST_METHOD'] == 'GET'){
+function isGET()
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         return true;
-    }
-    else {
+    } else {
         return false;
     }
 }
-function filterData($method =''){
+function filterData($method = '')
+{
     $filterArr = []; // Chỉnh lại tên cho đúng chính tả "Filter"
 
     // 1. Trường hợp không truyền method (tự động nhận diện)
     if (empty($method)) {
-        // Xử lý GET
         if (isGet() && !empty($_GET)) {
             foreach ($_GET as $key => $value) {
                 $key = strip_tags($key);
@@ -72,7 +75,6 @@ function filterData($method =''){
                 }
             }
         }
-        // Xử lý POST
         if (isPost() && !empty($_POST)) {
             foreach ($_POST as $key => $value) {
                 $key = strip_tags($key);
@@ -83,43 +85,43 @@ function filterData($method =''){
                 }
             }
         }
-    } 
-    // 2. Trường hợp ép buộc method cụ thể
-    else {
+    } else {
         $method = strtolower($method);
         if ($method == 'get' && !empty($_GET)) {
-            // ... (copy logic xử lý GET ở trên xuống)
         } else if ($method == 'post' && !empty($_POST)) {
-            // ... (copy logic xử lý POST ở trên xuống)
         }
     }
 
-    return $filterArr; // <--- Dòng này để cứu lỗi "Assigning void" nè!
+    return $filterArr; //  để cứu lỗi "Assigning "
 }
-function validateEmail($email){
-    if(!empty($email)){
+function validateEmail($email)
+{
+    if (!empty($email)) {
         $checkmail = filter_var($email, FILTER_VALIDATE_EMAIL);
     }
     return $checkmail;
 }
-function validateInt ($number){
-    if(!empty($number)){
-        $checknumber = filter_var($number,FILTER_VALIDATE_INT);
+function validateInt($number)
+{
+    if (!empty($number)) {
+        $checknumber = filter_var($number, FILTER_VALIDATE_INT);
     }
     return $checknumber;
 }
-function isPhone ($phone){
+function isPhone($phone)
+{
     $phoneFirst = false;
-    if($phone[0] == '0'){
-        $phoneFirst = true ;
-        $phone = substr($phone,1);
+    if ($phone[0] == '0') {
+        $phoneFirst = true;
+        $phone = substr($phone, 1);
     }
     $checkphone = false;
-    if(validateInt($phone)){
+    if (validateInt($phone)) {
         $checkphone = true;
     }
-    if($phoneFirst & $checkphone){
+    if ($phoneFirst & $checkphone) {
         return true;
     }
     return false;
 }
+
