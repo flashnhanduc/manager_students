@@ -12,12 +12,15 @@ function setSession ($key ,$value){
 }
 //get session
 function getSession ($key = ''){
-    if(!empty($key)){
-        return $_SESSION;
+    if(empty($key)){            // Nếu KHÔNG truyền key nào cả
+        return $_SESSION;       // Mới trả về toàn bộ Session
     }
+    
+    // Nếu có truyền key, thì chỉ lấy đúng phần tử đó ra thôi
     if(isset($_SESSION[$key])){
         return $_SESSION[$key];
     }
+    
     return false;
 }
 function removeSession ($key = ''){

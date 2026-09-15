@@ -6,6 +6,7 @@ require_once './templates/assets/layouts/header-auth.php';
 
 $filter = filterData();
 $checktoken = null; // Khởi tạo để tránh lỗi undefined
+$errorMsg = '';
 
 if (!empty($filter['token'])) {
     $token = $filter['token'];

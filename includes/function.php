@@ -18,7 +18,7 @@ function sendMail($to, $subject, $content)
     $mail = new PHPMailer(true);
     try {
         //Server settings
-        $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        $mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Enable verbose debug output
         $mail->isSMTP();                                            //Send using SMTP
         $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
         $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
@@ -31,15 +31,15 @@ function sendMail($to, $subject, $content)
         $mail->addAddress($to);
 
         // Nội dung Email
-        $mail -> CharSet = "UTF-8";
+        $mail->CharSet = "UTF-8";
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body    = $content;
 
         $mail->send();
-    echo 'Message has been sent';
+        echo 'Message has been sent';
     } catch (Exception $e) {
-       echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
     }
 }
 
@@ -92,7 +92,7 @@ function filterData($method = '')
         }
     }
 
-    return $filterArr; //  để cứu lỗi "Assigning "
+    return $filterArr;
 }
 function validateEmail($email)
 {
@@ -124,4 +124,30 @@ function isPhone($phone)
     }
     return false;
 }
-
+//notification 
+function getMsg( $msg , $type = 'success')
+{
+    echo '<div class="annouce-message alert alert-' . $type . '">';
+    echo $msg;
+    echo '</div>';
+}
+//show errors
+function formError($error, $fieldName)
+{
+    return (!empty($errors[$fieldName])) ? '<div class ="error">' . reset($errors[$fieldName]) . '</div>' : false;
+}
+//show old data
+function oldData($olData)
+{
+    return !empty($olData['email']) ? $olData['email'] : null;
+}
+function redirect($path, $pathFull = false){
+    if($pathFull){
+        header("Location: $path");
+        exit();
+    }else{
+        $url = _HOST_URL . $path;
+        header("Location: $url");
+        exit();
+    }
+}
