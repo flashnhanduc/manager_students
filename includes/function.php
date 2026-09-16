@@ -151,3 +151,15 @@ function redirect($path, $pathFull = false){
         exit();
     }
 }
+function isLogin(){
+    $checkLogin = false;
+    $token_login = getSessionFlash('token_login');
+// echo $token_login;
+$checkToken = getOne("SELECT *FROM token_login WHERE token = '$token_login'");
+if(!empty($checkToken)){
+     $checkLogin = true;
+}else{
+  removeSession('token_login');
+}
+return $checkLogin;
+}

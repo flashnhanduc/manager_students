@@ -41,6 +41,7 @@ if (isPost()) {
         $checkStatus = password_verify($password, $checkEmail['password']);
         if ($checkStatus) {
           $token = sha1(uniqid() . time());
+          setSessionFlash('token_login', $token);
           $data = [
             'token' => $token,
             'create_at' => date('Y:m:d H:i:s'),

@@ -2,7 +2,11 @@
 if(!defined( '_NhanDuc')){
     die ('Truy cap kh hop le');
 }
+if(!isLogin()){
+  redirect('?module=auth&action=login');
+}
 ?>
+
 <!doctype html>
 <html lang="en">
   <!--begin::Head-->
