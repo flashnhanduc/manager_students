@@ -1,5 +1,4 @@
 <?php
-
-if(!defined( '_NhanDuc')){
-    die ('Truy cap kh hop le');
+if (!defined('_NhanDuc')) {
+    die('Truy cap kh hop le');
 }

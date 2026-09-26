@@ -111,9 +111,6 @@ if (isPost()) {
             ';
             
             sendMail($to, $subject, $content);
-            
-            // SỬA 4: Khi đăng ký thành công, lưu thông báo vào Flash Session và CHUYỂN HƯỚNG ngay sang Login.
-            // Trang Login sẽ nhận được Session này và hiện thông báo màu xanh.
             setSessionFlash('msg', 'Đăng ký thành công! Vui lòng kiểm tra email để kích hoạt.');
             setSessionFlash('msg_type', 'success');
             header("Location: " . _HOST_URL . "?module=auth&action=login");

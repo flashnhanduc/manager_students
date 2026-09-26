@@ -1,0 +1,114 @@
+<?php
+if (!defined('_NhanDuc')) {
+    die('Truy cap kh hop le');
+}
+layout('header-auth');
+
+$token = filterData()['token'] ?? ($_GET['token'] ?? '');
+$isTokenValid = false;
+$userQuery = null;
+
+if (!empty($token)) {
+    $userQuery = getOne("SELECT * FROM users WHERE Foget_token = '$token'");
+    if (!empty($userQuery)) {
+        $isTokenValid = true;
+    }
+}
+
+$erorr = [];
+if (isPost()) {
+    $filter = filterData();
+    $tokenPost = $filter['token'] ?? '';
+
+    // Re-verify token
+    $userQuery = getOne("SELECT * FROM users WHERE Foget_token = '$tokenPost'");
+    if (empty($userQuery)) {
+        setSessionFlash('msg', 'Mã khôi phục không hợp lệ hoặc đã hết hạn.');
+        setSessionFlash('msg_type', 'danger');
+    } else {
+        // Validate password
+        if (empty($filter['password'])) {
+            $erorr['password']['required'] = 'Mật khẩu bắt buộc phải nhập.';
+        } else if (strlen(trim($filter['password'])) < 6) {
+            $erorr['password']['length'] = 'Mật khẩu phải từ 6 ký tự trở lên.';
+        }
+
+        // Validate confirm password
+        if (empty($filter['confirm_password'])) {
+            $erorr['confirm_password']['required'] = 'Vui lòng xác nhận mật khẩu.';
+        } else if (trim($filter['password']) !== trim($filter['confirm_password'])) {
+            $erorr['confirm_password']['match'] = 'Mật khẩu xác nhận không khớp.';
+        }
+
+        if (empty($erorr)) {
+            $passwordHash = password_hash($filter['password'], PASSWORD_DEFAULT);
+            $userId = $userQuery['ID'];
+
+            $dataUpdate = [
+                'password' => $passwordHash,
+                'Foget_token' => ''
+            ];
+
+            $updateStatus = update('users', $dataUpdate, "ID=$userId");
+            if ($updateStatus) {
+                setSessionFlash('msg', 'Đặt lại mật khẩu thành công. Vui lòng đăng nhập bằng mật khẩu mới!');
+                setSessionFlash('msg_type', 'success');
+                redirect("?module=auth&action=login");
+            } else {
+                setSessionFlash('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau.');
+                setSessionFlash('msg_type', 'danger');
+            }
+        } else {
+            setSessionFlash('msg', 'Vui lòng kiểm tra lại thông tin nhập vào.');
+            setSessionFlash('msg_type', 'danger');
+        }
+    }
+}
+
+$msg = getSessionFlash('msg');
+$msg_type = getSessionFlash('msg_type');
+?>
+
+<div class="container" style="max-width: 500px; margin: 50px auto;">
+    <div class="login-container shadow p-4 bg-white rounded">
+        <h3 class="text-center mb-3" style="font-weight: 700; color: #333;">RESET PASSWORD</h3>
+        <p class="text-center mb-4" style="font-size: 13px; color: #777;">
+            Vui lòng nhập mật khẩu mới cho tài khoản của bạn.
+        </p>
+
+        <?php if (!empty($msg) && !empty($msg_type)): ?>
+            <?php getMsg($msg, $msg_type); ?>
+        <?php endif; ?>
+
+        <?php if ($isTokenValid || isPost()): ?>
+            <form action="" method="POST">
+                <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
+
+                <div class="form-outline mb-3">
+                    <label class="form-label">New Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="Tối thiểu 6 ký tự" />
+                    <?php echo (!empty($erorr['password'])) ? '<small class="text-danger">' . reset($erorr['password']) . '</small>' : ''; ?>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <label class="form-label">Confirm New Password</label>
+                    <input type="password" name="confirm_password" class="form-control" placeholder="Nhập lại mật khẩu mới" />
+                    <?php echo (!empty($erorr['confirm_password'])) ? '<small class="text-danger">' . reset($erorr['confirm_password']) . '</small>' : ''; ?>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block w-100 mb-3">CHANGE PASSWORD</button>
+
+                <div class="text-center">
+                    <p><a href="<?php echo _HOST_URL ?>?module=auth&action=login" style="text-decoration: none;">← Hủy bỏ và quay lại đăng nhập</a></p>
+                </div>
+            </form>
+        <?php else: ?>
+            <div class="alert alert-danger text-center">
+                Mã kích hoạt/khôi phục không hợp lệ hoặc đã hết hạn.
+            </div>
+            <div class="text-center">
+                <a href="<?php echo _HOST_URL ?>?module=auth&action=forgot" class="btn btn-warning btn-block">Gửi lại yêu cầu</a>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>
