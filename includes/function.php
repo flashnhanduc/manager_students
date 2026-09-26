@@ -2,7 +2,7 @@
 if (!defined('_NhanDuc')) {
     die('Truy cap kh hop le');
 }
-function layout($layout)
+function layout(string $layout)
 {
     if (file_exists(_PATH_URL_TEMPALTES . '/assets/layouts/' . $layout . '.php')) {
         require_once _PATH_URL_TEMPALTES . '/assets/layouts/' . $layout . '.php';
@@ -13,7 +13,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-function sendMail($to, $subject, $content)
+function sendMail(string $to, string $subject, string $content)
 {
     $mail = new PHPMailer(true);
     try {
@@ -61,7 +61,7 @@ function isGET()
 }
 function filterData($method = '')
 {
-    $filterArr = []; // Chỉnh lại tên cho đúng chính tả "Filter"
+    $filterArr = [];
 
     // 1. Trường hợp không truyền method (tự động nhận diện)
     if (empty($method)) {
@@ -86,29 +86,47 @@ function filterData($method = '')
             }
         }
     } else {
-        $method = strtolower($method);
+        // 2. Trường hợp chỉ định rõ phương thức GET hoặc POST
+        $method = strtolower(trim($method));
+        
         if ($method == 'get' && !empty($_GET)) {
+            foreach ($_GET as $key => $value) {
+                $key = strip_tags($key);
+                if (is_array($value)) {
+                    $filterArr[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+                } else {
+                    $filterArr[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                }
+            }
         } else if ($method == 'post' && !empty($_POST)) {
+            foreach ($_POST as $key => $value) {
+                $key = strip_tags($key);
+                if (is_array($value)) {
+                    $filterArr[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+                } else {
+                    $filterArr[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                }
+            }
         }
     }
 
     return $filterArr;
 }
-function validateEmail($email)
+function validateEmail(string $email)
 {
     if (!empty($email)) {
         $checkmail = filter_var($email, FILTER_VALIDATE_EMAIL);
     }
     return $checkmail;
 }
-function validateInt($number)
+function validateInt(string $number)
 {
     if (!empty($number)) {
         $checknumber = filter_var($number, FILTER_VALIDATE_INT);
     }
     return $checknumber;
 }
-function isPhone($phone)
+function isPhone(string $phone)
 {
     $phoneFirst = false;
     if ($phone[0] == '0') {
@@ -125,23 +143,23 @@ function isPhone($phone)
     return false;
 }
 //notification 
-function getMsg( $msg , $type = 'success')
+function getMsg(string $msg , $type = 'success')
 {
     echo '<div class="annouce-message alert alert-' . $type . '">';
     echo $msg;
     echo '</div>';
 }
 //show errors
-function formError($error, $fieldName)
+function formError($error,string  $fieldName)
 {
     return (!empty($errors[$fieldName])) ? '<div class ="error">' . reset($errors[$fieldName]) . '</div>' : false;
 }
 //show old data
-function oldData($olData)
+function oldData(array $olData)
 {
     return !empty($olData['email']) ? $olData['email'] : null;
 }
-function redirect($path, $pathFull = false){
+function redirect(string $path, $pathFull = false){
     if($pathFull){
         header("Location: $path");
         exit();

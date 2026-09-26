@@ -3,37 +3,71 @@ if (!defined('_NhanDuc')) {
     die('Truy cap kh hop le');
 }
 layout('header-auth');
-if (isPost()) {
-    $filter = filterdata();
-    $erorr = [];
-
-    if (empty($filter['password'])) {
-        $erorr['password']['required'] = 'Mật khẩu bắt buộc phải nhập';
-    } else {
-        if (strlen(trim($filter['password'])) < 6) {
-            $erorr['password']['length'] = 'Mật khẩu phải từ 6 kí tự trở lên';
-        }
-    }
-    // validate confirm_pass
-    if (empty($filter['confirm_password'])) {
-        $erorr['confirm_password']['required'] = 'Vui lòng nhập lại mật khẩu';
-    } else {
-        if (trim($filter['password']) !== trim($filter['confirm_password'])) {
-            $erorr['confirm_password']['like'] = 'Mật khẩu không khớp';
-        }
-    }
-    if (empty($erorr)) {
-    } else {
-        setSessionFlash('msg', 'Nhập cho đàng hoàng vào');
-        setSessionFlash('msg_type', 'danger');
-        setSessionFlash('oldData', $filter);
-        setSessionFlash('errors', $erorr);
-    }
-    $msg = getSessionFlash('msg');
-    $msg_type = getSessionFlash('msg_type');
-    $olddata = getSessionFlash('oldData') ?? [];
-    $erorrArr = getSessionFlash('errors') ?? [];
+$filter = [];
+$erorr = [];
+$filterGet = filterData('GET');
+if (!empty($filterGet['token'])) {
+    $tokenRest = $filterGet['token'];
 }
+
+if (!empty($tokenRest)) {
+    //check token hop le
+    $checkToken = getOne("SELECT * FROM users WHERE Foget_token = '$tokenRest'");
+    if (!empty($checkToken)) {
+        if (isPost()) {
+            $filter = filterdata();
+            $erorr = [];
+
+            if (empty($filter['password'])) {
+                $erorr['password']['required'] = 'Mật khẩu bắt buộc phải nhập';
+            } else {
+                if (strlen(trim($filter['password'])) < 6) {
+                    $erorr['password']['length'] = 'Mật khẩu phải từ 6 kí tự trở lên';
+                }
+            }
+            // validate confirm_pass
+            if (empty($filter['confirm_password'])) {
+                $erorr['confirm_password']['required'] = 'Vui lòng nhập lại mật khẩu';
+            } else {
+                if (trim($filter['password']) !== trim($filter['confirm_password'])) {
+                    $erorr['confirm_password']['like'] = 'Mật khẩu không khớp';
+                }
+            }
+            if (empty($erorr)) {
+                $password = password_hash($filter['password'], PASSWORD_DEFAULT);
+                $data = [
+                    'password' => $password,
+                    'Foget_token' => null,
+                    'update_at'   =>  date('Y:m:d H:i:s')
+                ];
+                $condition = "ID " . $checkToken['id'];
+                $updateStatus = update('users', $data, $condition);
+                if ($updateStatus) {
+                   setSessionFlash('msg', 'Đổi mật khẩu thành công');
+                    setSessionFlash('msg_type', 'success');
+                } else {
+                    setSessionFlash('msg', 'Đã có lỗi xảy ra');
+                    setSessionFlash('msg_type', 'danger');
+                }
+            } else {
+                setSessionFlash('msg', 'Nhập cho đàng hoàng vào');
+                setSessionFlash('msg_type', 'danger');
+                setSessionFlash('oldData', $filter);
+                setSessionFlash('errors', $erorr);
+            }
+        }
+    } else {
+        getMsg('Liên kết đã hết hạn hoặc không tồn tại', 'danger');
+    }
+} else {
+    getMsg('Liên kết đã hết hạn hoặc không tồn tại', 'danger');
+}
+
+$msg = getSessionFlash('msg');
+$msg_type = getSessionFlash('msg_type');
+$olddata = getSessionFlash('oldData') ?? [];
+$erorrArr = getSessionFlash('errors') ?? [];
+
 ?>
 <div class="login-container">
     <h3 class="text-center mb-3" style="font-weight: 700; color: #333;">RESET PASSWORD</h3>
