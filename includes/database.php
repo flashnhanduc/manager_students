@@ -88,23 +88,16 @@ function update($table, $data, $condition){
     return $stm->execute($data);
 }
 function delete($table, $condition = ''){
-    /*
-        $table: Tên bảng muốn xóa (ví dụ: 'users')
-        $condition: Điều kiện xóa (ví dụ: 'id = 5')
-    */
-    
     global $conn;
 
-    // Nếu có điều kiện thì mới thực hiện xóa để tránh xóa sạch bảng
-    if (empty($condition)) {
-        $sql = "DELETE FROM $table";
-    } else {
-        $sql = "DELETE FROM $table WHERE $condition";
-    }
+    // Bắt buộc phải có điều kiện mới cho xóa. Nếu rỗng, từ chối thực thi.
+    if (empty(trim($condition))) {
+        return false; 
+    } 
 
+    $sql = "DELETE FROM $table WHERE $condition";
+    
     $stm = $conn->prepare($sql);
-
-    // Thực thi câu lệnh
     return $stm->execute();
 }
 //lấy dòng dữ liệu new

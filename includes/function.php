@@ -171,7 +171,7 @@ function redirect(string $path, $pathFull = false){
 }
 function isLogin(){
     $checkLogin = false;
-    $token_login = getSessionFlash('token_login');
+    $token_login = getSession('token_login');
 // echo $token_login;
 $checkToken = getOne("SELECT *FROM token_login WHERE token = '$token_login'");
 if(!empty($checkToken)){
