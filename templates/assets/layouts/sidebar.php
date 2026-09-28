@@ -8,7 +8,7 @@ if(!defined( '_NhanDuc')){
         <!--begin::Sidebar Brand-->
         <div class="sidebar-brand">
           <!--begin::Brand Link-->
-          <a href="./index.html" class="brand-link">
+          <a href="<?php echo _HOST_URL ?>" class="brand-link">
             <!--begin::Brand Image-->
             <img
               src=""
@@ -36,7 +36,7 @@ if(!defined( '_NhanDuc')){
               id="navigation"
             >
               <li class="nav-item menu-open">
-                <a href="#" class="nav-link active">
+                <a href="<?php echo _HOST_URL ?>" class="nav-link active">
                   <i class="nav-icon bi bi-speedometer"></i>
                   <p>
                     Dashboard
@@ -56,19 +56,19 @@ if(!defined( '_NhanDuc')){
                 </a>
                 <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="./widgets/small-box.html" class="nav-link">
+                    <a href="?module=course&action=list" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Danh Sách</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="./widgets/info-box.html" class="nav-link">
+                    <a href="?module=course&action=add" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Thêm Khóa Học Mới</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="./widgets/cards.html" class="nav-link">
+                    <a href="?module=course_category&action=list" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Lĩnh Vực</p>
                     </a>
@@ -85,13 +85,13 @@ if(!defined( '_NhanDuc')){
                 </a>
                 <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="./layout/unfixed-sidebar.html" class="nav-link">
+                    <a href="?module=users&action=list" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Danh Sách Tài Khoản</p>
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="./layout/fixed-sidebar.html" class="nav-link">
+                    <a href="?module=users&action=add" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Tạo Mới Tài Khoảnr</p>
                     </a>
@@ -107,7 +107,7 @@ if(!defined( '_NhanDuc')){
                 </a>
                 <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="./forms/general.html" class="nav-link">
+                    <a href="?module=students" class="nav-link">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Danh Sách Học Viên</p>
                     </a>

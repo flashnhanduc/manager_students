@@ -15539,6 +15539,7 @@ fieldset legend {
   border-top-color: transparent;
   animation: spin 1s linear infinite;
 }
+
 @media (prefers-reduced-motion: reduce) {
   .loading[aria-busy=true]::after {
     border-top-color: var(--bs-primary);

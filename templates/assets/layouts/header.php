@@ -22,8 +22,8 @@ if(!isLogin()){
     <!--end::Accessibility Meta Tags-->
 
     <!--begin::Primary Meta Tags-->
-    <meta name="title" content="AdminLTE v4 | Dashboard" />
-    <meta name="author" content="ColorlibHQ" />
+    <meta name="title" content="Manager students" />
+    <meta name="author" content="FL_NHANDUC" />
     <meta
       name="description"
       content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS. Fully accessible with WCAG 2.1 AA compliance."
@@ -69,6 +69,8 @@ if(!isLogin()){
 
     <!--begin::Required Plugin(AdminLTE)-->
     <link rel="stylesheet" href="<?php echo _HOST_URL_TEMLATES ?>/assets/css/adminlte.css" />
+    <link rel="stylesheet" href="<?php echo _HOST_URL_TEMLATES ?>/assets/css/custom.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css">
     <!--end::Required Plugin(AdminLTE)-->
 
     <!-- apexcharts -->
