@@ -4,7 +4,16 @@ if (!defined('_NhanDuc')) {
   die('Truy cap kh hop le');
 }
 layout('header');
-layout('sidebar')
+layout('sidebar');
+
+$getDataUser = getAll("SELECT a.ID, a.FullName, a.Email, a.Create_at, b.name 
+FROM users a INNER JOIN user_groups b ON a.Group_id = b.id ");
+// echo '<pre>';
+// print_r($getDataUser);
+// echo '</pre>';
+// die()
+
+
 ?>
 <div class="container grid-user">
   <div class="container-fluid">
@@ -42,20 +51,48 @@ layout('sidebar')
         </tr>
       </thead>
       <tbody>
+        <?php
+        foreach ($getDataUser as $key => $items):
+        ?>
         <tr>
-          <th scope="row">1</th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-          <td>Otto</td>
-          <td><button class="btn btn-primary">Phân Quyền</button></td>
-          <td><button class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></button></td>
-          <td><button class="btn btn-danger"><i class="fa-solid fa-trash"></i></button></td>
+          <th scope="row"><?php echo $key+1 ?></th>
+          <td><?php echo $items['FullName'] ?></td>
+          <td><?php echo $items['Email'] ?></td>
+          <td><?php echo $items['Create_at'] ?></td>
+          <td><?php echo $items['name'] ?></td>
+          <td><a href="?module=users&action=permission&id=<?php echo $items['ID'] ?>" class="btn btn-primary">Phân Quyền</a></td>
+          <td><a href="?module=users&action=edit&id=<?php echo $items['ID'] ?>" class="btn btn-warning"><i class="fa-solid fa-pen-to-square"></i></a></td>
+          <td><a href="?module=users&action=delete&id=<?php echo $items['ID'] ?>" onclick="return confirm('Bạn có xác nhận xóa không')" class="btn btn-danger"><i class="fa-solid fa-trash"></i></a></td>
         </tr>
+         <?php
+         endforeach; 
+         ?>
       </tbody>
     </table>
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item">
+          <a class="page-link" href="#" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+            <span class="sr-only">Previous</span>
+          </a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+          <a class="page-link" href="#" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Next</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    </nav>
   </div>
+
 </div>
+
 <?php
 layout('footer')
 ?>
