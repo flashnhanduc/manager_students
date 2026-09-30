@@ -5,35 +5,77 @@ if (!defined('_NhanDuc')) {
 }
 layout('header');
 layout('sidebar');
+$filter = filterData();
+$stringWhere = '';
+$group = 0;
+$keywork = '';
+
+if(isGET()){
+    if(isset($filter['keywork'])){
+        $keywork = $filter['keywork'];
+    }
+    if(isset($filter['group'])){
+        $group = $filter['group'];
+    }
+
+    if(!empty($keywork)){
+        if($stringWhere == ''){
+            $stringWhere .= ' WHERE ';
+        } else {
+            $stringWhere .= ' AND ';
+        }
+        $stringWhere .= " (a.FullName LIKE '%$keywork%' OR a.Email LIKE '%$keywork%') ";
+    }
+
+    if(!empty($group)){
+        if($stringWhere == ''){
+            $stringWhere .= ' WHERE ';
+        } else {
+            $stringWhere .= ' AND ';
+        }
+        $stringWhere .= " a.Group_id = $group ";
+    }
+}
 
 $getDataUser = getAll("SELECT a.ID, a.FullName, a.Email, a.Create_at, b.name 
-FROM users a INNER JOIN user_groups b ON a.Group_id = b.id ");
+FROM users a INNER JOIN user_groups b 
+ON a.Group_id = b.id $stringWhere 
+ORDER BY a.Create_at DESC");
 // echo '<pre>';
 // print_r($getDataUser);
 // echo '</pre>';
 // die()
 
-
+ $getDataGroup = getAll("SELECT * FROM user_groups");
+//  echo '<pre>';
+// print_r($getDataGroup);
+// echo '</pre>';
+// die()
 ?>
 <div class="container grid-user">
   <div class="container-fluid">
     <a href="?modules=users&action=add" class="btn btn-success mb-3">
       <i class="fa-solid fa-plus"></i> Thêm mới người dùng
     </a>
-    <form class="mb-3" action="">
+    <form class="mb-3" action="" method="GET">
+      <input type="hidden" name="module" value="users">
+      <input type="hidden" name="action" value="list">
       <div class="row">
         <div class="col-3">
-          <select name="" class="form-control" id="">
+          <select name="group" class="form-control" id="">
             <option value="">Nhóm người dùng</option>
-            <option value="">admin</option>
-            <option value="">student</option>
+            <?php foreach($getDataGroup as $items): ?>
+            <option value="<?php echo $items['id']; ?>" <?php echo ($group == $items['id']) ? 'selected' : ''; ?>>
+        <?php echo $items['Name']; ?> 
+    </option>
+            <?php endforeach; ?>
           </select>
         </div>
         <div class="col-7">
-          <input type="text" name="" class="form-control" placeholder="Nhập thông tin tìm kiếm">
+          <input type="text" name="keywork" value="<?php echo (!empty($keywork)) ? $keywork : false ; ?>" class="form-control" placeholder="Nhập thông tin tìm kiếm">
         </div>
         <div class="col-2">
-          <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+          <button type="submit" name="" class="btn btn-primary w-100">Tìm kiếm</button>
         </div>
       </div>
     </form>
